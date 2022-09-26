@@ -8,12 +8,12 @@ options:
   -h, --help            show this help message and exit
   -c COLOR [COLOR ...], --color COLOR [COLOR ...]
                         <Required> Set flag
-  --vx VX               Length of video in seconds
-  --vy VY               Length of video in seconds
+  --vx VX               Initial Velocity of horizontal direction.
+  --vy VY               Initial Velocity of Vertical direction.
   -l LENGTH, --length LENGTH
                         Length of video in seconds
   -a ACCELERATION, --acceleration ACCELERATION
-                        Acceleration due to gravity with operational range 1 to 10
+                        Acceleration due to gravity with operational range 1 to 2
   -t HEIGHT, --height HEIGHT
                         Resolution of video: height
   -w WIDTH, --width WIDTH
@@ -122,7 +122,7 @@ def main(args):
     bg_width        = args.width  # Background width
     bg_shape        = (bg_height, bg_width, 3)
     color           = (args.color[0], args.color[1], args.color[2]) 
-    ball1           = BouncingBall(args.vx, args.vy, gravity)
+    ball1           = BouncingBall(args.vx, args.vy, gravity, bg_height, bg_width)
     background_img  = np.zeros(bg_shape, dtype='uint8')
     start_time      = time.time()
     
@@ -155,8 +155,8 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Process some integers.')
     parser.add_argument('-c', '--color', nargs='+', help='<Required> Set flag', required=False, type=int, default=[100, 100, 0])
-    parser.add_argument('--vx', default=3, type=int, help='Length of video in seconds')
-    parser.add_argument('--vy', default=4, type=int, help='Length of video in seconds')
+    parser.add_argument('--vx', default=3, type=int, help='Initial Velocity of horizontal direction.')
+    parser.add_argument('--vy', default=4, type=int, help='Initial Velocity of Vertical direction.')
     parser.add_argument('-l', '--length', action='store', default=30, type=int, help='Length of video in seconds')
     parser.add_argument('-a', '--acceleration', action='store', default=1, type=int, help='Acceleration due to gravity with operational range 1 to 10')
     parser.add_argument('-t','--height', action='store', default=680, type=int, help='Resolution of video: height')

@@ -12,7 +12,7 @@ Examples:
 To use the default setting, run:
 python generate_ball.py
 or to customize, run:
-python generate_ball.py -c 255 0 0 --vx 50 --vy 0 -l 25 -a 2 -t 680 -w 1040
+python generate_ball.py -c 255 0 0 --vx 20 --vy 4 -l 50 -a 1 -t 680 -w 1040
 ```
 
 **Step 2: Detect ball in video**
@@ -26,7 +26,9 @@ The ball will be drop or throw to a box, it will bouncing until it will stop bec
 
 ## Some notes and expected failures:
 
-- BUGs in platform of VScode-Windown Sub-System for Linux (WSL): Un-consistent key pressing. Because of this bugs, this code will not implement the feature "press q to quit while program on running". The only to quit is press Ctrl + C dirrectly to terminal.
+- BUGs in platform of VScode-Windown Sub-System for Linux (WSL): Un-consistent key pressing. Because of this bugs, this code will not implement the feature "press q to quit while program on running". Please use Ctrl + C to quit during running.
 https://stackoverflow.com/questions/67600528/opencv-waitkey0-triggers-without-keypress
 
 - When you throw the ball so hard (vy large), such that it reach the roof. It will continue boucing forever. The reason is that, I didnot implement any force absorption at top border.
+
+- The accelarator value should be divisors of vy, because we dont want to deal with float pixel
