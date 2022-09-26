@@ -1,5 +1,5 @@
 # BouncingBall
-This code generates and save a video of a ball bouncing across the screen. 
+This code using OpenCV to generates and save a video of a ball bouncing across the screen. It then loads a video file of a bouncing ball, and detects the 2D location of the ball in each frame of the video using OpenCV methods. While iterating through the frames, it display the original frames in a single window overlaid with the marked location (bounding box) of the ball, and frame number written in a corner.
 
 ## How to run the code
 
@@ -9,9 +9,7 @@ python generate_ball.py [-h] [-c COLOR [COLOR ...]] [--vx VX] [--vy VY] [-l LENG
 ```
 Examples:
 ```
-To use the default setting, run:
 python generate_ball.py
-or to customize, run:
 python generate_ball.py -c 255 0 0 --vx 20 --vy 4 -l 50 -a 1 -t 680 -w 1040
 ```
 
