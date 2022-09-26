@@ -1,3 +1,25 @@
+'''
+This file generates and saves a video (.avi file) of a ball bouncing across the screen.
+
+usage: 
+    generate_ball.py [-h] [-c COLOR [COLOR ...]] [--vx VX] [--vy VY] [-l LENGTH] [-a ACCELERATION] [-t HEIGHT] [-w WIDTH]
+
+options:
+  -h, --help            show this help message and exit
+  -c COLOR [COLOR ...], --color COLOR [COLOR ...]
+                        <Required> Set flag
+  --vx VX               Length of video in seconds
+  --vy VY               Length of video in seconds
+  -l LENGTH, --length LENGTH
+                        Length of video in seconds
+  -a ACCELERATION, --acceleration ACCELERATION
+                        Acceleration due to gravity with operational range 1 to 10
+  -t HEIGHT, --height HEIGHT
+                        Resolution of video: height
+  -w WIDTH, --width WIDTH
+                        Resolution of video: width
+'''
+
 import cv2
 import numpy as np
 import argparse
@@ -5,24 +27,48 @@ import time
 
 
 class BouncingBall():
-    def __init__(self, vx=2, vy=4, gravity=1):
+    """An Bouncing Ball Object.
+
+    Attributes:
+        vx (int):           Initial Velocity of horizontal direction.
+        vy (int):           Initial Velocity of vertical direction.
+        gravity (int):      Accelarator by gravity.
+        bg_height (int):    Height of screen in pixels.
+        bg_width (int):     Width of screen in pixels
+
+    """
+    def __init__(self, vx=2, vy=4, gravity=1, bg_height=680, bg_width=1040):
         # Coordinates of the ball
         self.x = 200
         self.y = 200
         # Direction of the ball
-        self.dx = 1 # (>0:go down, <0:go up)
-        self.dy = 1 # (>0:go right, <0:go left)
+        self.dx = 1 
+        self.dy = 1 
         # Velocity of the ball
         self.vx = vx 
         self.vy = vy
         self.gravity = gravity
-        self.bg_height = 680
-        self.bg_width  = 1040
+        self.bg_height = bg_height
+        self.bg_width  = bg_width
         
     def get_xy(self):
+        """Get the current cordination of the ball.
+
+        Args: None
+
+        Returns: (x, y)
+
+        """
         return (self.x, self.y)
     
     def update_xy(self):
+        """Update the cordination of the ball after 20ms.
+        
+        Args: None
+        
+        Returns: None
+        
+        """
         self.vy = self.vy + self.dy * self.gravity
         if(self.vy == 0):
             self.dy *= -1
@@ -31,6 +77,15 @@ class BouncingBall():
 
     
     def CheckifInsideScreen(self):
+        """Check border conditions.
+        
+        If the ball out of screen border then change the moving direction back the the screen
+        
+        Args: None
+        
+        Returns: None
+        
+        """
         if self.y >= self.bg_height-20:
             self.y = self.bg_height-20
             self.dy = -1*self.dy
@@ -46,48 +101,54 @@ class BouncingBall():
             self.dx = -1*self.dx
             
     def CheckStop(self):
+        """Check if the vertical velocity is zero (whether the ball moving up and down anymore)
+        
+        Args: None
+        
+        Returns: True if the ball is stop moving up and down
+        
+        """
         if(self.y == self.bg_height-20 and self.vy == 0):
             self.dy = 0
-            
-            # if(self.vx > 0):
-            #     self.vx -= 1 
-    
+            return True
+        return False
 
 def main(args):
-    # Init paramters
+    # Init paramtters
     print(args)
     gravity         = args.acceleration
     video_length    = args.length
-    bg_height       = args.height
-    bg_width        = args.width
+    bg_height       = args.height # Background height
+    bg_width        = args.width  # Background width
     bg_shape        = (bg_height, bg_width, 3)
-    color           = (args.color[0], args.color[1], args.color[2])
+    color           = (args.color[0], args.color[1], args.color[2]) 
     ball1           = BouncingBall(args.vx, args.vy, gravity)
     background_img  = np.zeros(bg_shape, dtype='uint8')
+    start_time      = time.time()
+    
+    # Create video-reading object
     fourcc          = cv2.VideoWriter_fourcc('M','J','P','G')
     fps             = 30
     video_filename  = 'output.avi'
     out             = cv2.VideoWriter(video_filename, fourcc, fps, (bg_width, bg_height))
-    start_time      = time.time()
-    
+
+    # Display the video frame by frame
     while (time.time() - start_time < video_length):
-        # Display the image
+        # Display frames
         cv2.imshow('Display and Refresh the background image', background_img)
         key = cv2.waitKey(20) & 0xFF # Wait for 20 ms
         background_img = np.zeros(bg_shape, dtype='uint8') 
         ball1.update_xy()
-        # print("y = ", ball1.y, " vy = ", ball1.vy, " dy = ", ball1.dy)
-        # create a ball shape
-        # cv2.ellipse(background_img, ball1.get_xy(), (20, 15), 0, 0, 360, (100,100,0), -1)
+
+        # Draw a ball on the background image
         cv2.circle(background_img, ball1.get_xy(), 20, color, -1)
-        # print(key)
+        
+        # Check falling conditions
         ball1.CheckifInsideScreen()
         ball1.CheckStop()
         out.write(background_img)
-        # key = cv2.waitKey(1) & 0xFF
-        # if the 'q' key is pressed, stop the loop
-        # if key == ord("d"):
-        #     break
+    
+    # Save .avi video   
     out.release()
     cv2.destroyAllWindows()
 
